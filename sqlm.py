@@ -10,14 +10,14 @@ class Manager(object):
         self.database = database
         self.cnx = mysql.connector.connect(user=user, password=password,
                                            database=self.database, host=host)
-        self.cursor = self.cnx.cursor()
+        self.cursor = self.cnx.cursor(buffered=True)
 
     def exe(self, query, display=0):
         # Execution of a query
         # query = <query goes here>
         # display = <0 or 1> if you want to display the result
         self.cursor.execute(query)
-        self.cnx.commit()
+        # self.cnx.commit()
         if display:
             for this in self.cursor:
                 print this
@@ -48,7 +48,7 @@ class Manager(object):
             default_check, default_value = checker('Default', 1)
             if (column_type.upper() not in ['INT', 'INTERGER']) and default_check:
                 default_value = '"' + default_value + '"'
-            default = 'Default' + default_value if default_check else ''
+            default = 'Default ' + default_value if default_check else ''
             if (i + 1) == number_of_columns:
                 tq += column_name + ' ' + column_type + ' ' + primary_key + \
                       ' ' + not_null + ' ' + default + ');'
@@ -60,10 +60,10 @@ class Manager(object):
 
     def table_insert(self, table):
         def more():
-            more = raw_input('Insert more values? (y/n): ').upper()
-            if more == 'Y':
+            _more = raw_input('Insert more values? (y/n): ').upper()
+            if _more == 'Y':
                 return False
-            elif more == 'N':
+            elif _more == 'N':
                 return True
             else:
                 more()
