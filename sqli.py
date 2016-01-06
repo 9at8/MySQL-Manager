@@ -1,6 +1,6 @@
-'''
+"""
 This is the interactive mode Python Based MySQL manager.
-'''
+"""
 
 import sys
 from time import sleep
