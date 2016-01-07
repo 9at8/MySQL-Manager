@@ -105,6 +105,3 @@ class Manager(object):
             self.cnx.commit()
             if more():
                 break
-
-m1 = Manager('root', '9at8_thakral', 'testing')
-m1.table_insert('testtable')
