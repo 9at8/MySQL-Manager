@@ -3,21 +3,33 @@ This module provides MySQL functions.
 """
 
 import mysql.connector
+from time import localtime
 
 
 class Manager(object):
+    file_log = open('mysql.log', 'a')
+
     def __init__(self, user, password, database, host='127.0.0.1'):
         self.database = database
         self.cnx = mysql.connector.connect(user=user, password=password,
                                            database=self.database, host=host)
         self.cursor = self.cnx.cursor(buffered=True)
 
+    @staticmethod
+    def log(query):
+        time_now = str(localtime().tm_hour) + ':' + str(localtime().tm_min) +\
+                   ' - ' + str(localtime().tm_mday) + '/' +\
+                   str(localtime().tm_mon) + '/' + str(localtime().tm_year) +\
+                   ' -> '
+        Manager.file_log.write(time_now + query + '\n')
+        Manager.file_log.flush()
+
     def exe(self, query, display=0):
-        # Execution of a query
+        # Execution of a query plus logging of commands
         # query = <query goes here>
         # display = <0 or 1> if you want to display the result
         self.cursor.execute(query)
-        # self.cnx.commit()
+        Manager.log(query)
         if display:
             for this in self.cursor:
                 print this
@@ -68,7 +80,7 @@ class Manager(object):
             else:
                 more()
 
-        self.exe('desc ' + table + ';')
+        self.cursor.execute('desc ' + table + ';')
         data = []
         for this in self.cursor:
             data.append(this)
@@ -93,3 +105,6 @@ class Manager(object):
             self.cnx.commit()
             if more():
                 break
+
+m1 = Manager('root', '9at8_thakral', 'testing')
+m1.table_insert('testtable')
